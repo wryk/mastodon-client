@@ -1,0 +1,9 @@
+body {
+	font-family: sans-serif;
+	max-width: 800px;
+	margin: auto;
+}
+
+.status {
+	background-color: whitesmoke;
+}
