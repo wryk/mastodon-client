@@ -9,6 +9,7 @@ import Effect.Aff (Aff)
 import Effect.Console (log)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 
 type State =
@@ -18,6 +19,10 @@ type State =
 data Query a
 	= Initialize a
 	| Finalize a
+	| Reply a
+	| Favourite a
+	| Reblog a
+	| More a
 
 type Input = Unit
 
@@ -60,21 +65,25 @@ component initialStatus =
 					, HH.div_
 						[ HH.button
 							[ HP.type_ HP.ButtonButton
+							, HE.onClick (HE.input_ Reply)
 							]
 							[ HH.text "REPLY"
 							]
 						, HH.button
 							[ HP.type_ HP.ButtonButton
+							, HE.onClick (HE.input_ Favourite)
 							]
 							[ HH.text "FAVOURITE"
 							]
 						, HH.button
 							[ HP.type_ HP.ButtonButton
+							, HE.onClick (HE.input_ Reblog)
 							]
 							[ HH.text "REBLOG"
 							]
 						, HH.button
 							[ HP.type_ HP.ButtonButton
+							, HE.onClick (HE.input_ More)
 							]
 							[ HH.text "MORE"
 							]
@@ -91,4 +100,20 @@ component initialStatus =
 			Finalize next -> do
 				H.liftEffect $ log "Status: Finalize"
 				H.raise Finalized
+				pure next
+
+			Reply next -> do
+				H.liftEffect $ log "Status: Reply"
+				pure next
+
+			Favourite next -> do
+				H.liftEffect $ log "Status: Favourite"
+				pure next
+			
+			Reblog next -> do
+				H.liftEffect $ log "Status: Reblog"
+				pure next
+
+			More next -> do
+				H.liftEffect $ log "Status: More"
 				pure next
