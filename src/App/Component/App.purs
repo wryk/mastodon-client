@@ -1,4 +1,4 @@
-module App.Component.Home where
+module App.Component.App where
 
 import Prelude
 
@@ -56,16 +56,28 @@ component =
 			HH.main
 				[ HP.class_ $ HH.ClassName "app"
 				]
-				(map renderTimeline state)
+				[ HH.div
+					[ HP.class_ $ HH.ClassName "app-navigation"
+					]
+					[
+					]
+				, HH.div
+					[ HP.class_ $ HH.ClassName "app-timelines"
+					]
+					(map renderTimeline state)
+				]
 
 		renderTimeline :: String -> H.ParentHTML Query TimelineComponent.Query TimelineSlot Aff
 		renderTimeline domain =
-			HH.slot
-				(TimelineSlot domain)
-				TimelineComponent.component
-				domain
-				(HE.input (HandleTimelineMessage domain))
-
+			HH.div
+				[ HP.class_ $ HH.ClassName "app-timeline"
+				]
+				[ HH.slot
+					(TimelineSlot domain)
+					TimelineComponent.component
+					domain
+					(HE.input (HandleTimelineMessage domain))
+				]
 
 		eval :: Query ~> H.ParentDSL State Query TimelineComponent.Query TimelineSlot Message Aff
 		eval = case _ of

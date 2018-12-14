@@ -1,0 +1,15 @@
+body {
+	font-family: sans-serif;
+}
+
+.app-navigation {
+	background-color: darkslateblue;
+}
+
+.timeline {
+	border: 1px solid grey;
+}
+
+.status {
+	background-color: whitesmoke;
+}

@@ -3,8 +3,8 @@ module App.Component.Timeline where
 import Prelude
 
 import App.API.Client (fetchPublicTimeline)
-import App.Component.Status as StatusComponent
 import App.Component.Status (Message(..)) as StatusComponentMessage
+import App.Component.Status as StatusComponent
 import App.Type.Status (Status(..))
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
@@ -60,16 +60,22 @@ component =
 			HH.section
 				[ HP.class_ $ HH.ClassName "timeline"
 				]
-				[ HH.h1_
-					[ HH.text $ "[Timeline] " <> state.domain
+				[ HH.header
+					[ HP.class_ $ HH.ClassName "timeline-title"
 					]
-				, HH.ul_
+					[ HH.text $ state.domain
+					]
+				, HH.div
+					[ HP.class_ $ HH.ClassName "timeline-statuses"
+					]
 					(map renderStatus state.statuses)
 				]
 
 		renderStatus :: Status -> H.ParentHTML Query StatusComponent.Query StatusSlot Aff
 		renderStatus status@(Status r) =
-			HH.li_
+			HH.div
+				[ HP.class_ $ HH.ClassName "timeline-status"
+				]
 				[ HH.slot
 					(StatusSlot r.id)
 					(StatusComponent.component status)
@@ -86,7 +92,7 @@ component =
 				pure next
 
 			Initialize next -> do
-				H.liftEffect $ log "Timleine: Initialize"
+				H.liftEffect $ log "Timeline: Initialize"
 
 				domain <- H.gets _.domain
 				H.liftEffect $ log $ "Domain is " <> domain

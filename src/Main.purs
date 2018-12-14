@@ -6,7 +6,7 @@ import Effect (Effect)
 import Halogen.Aff as HA
 import Halogen.VDom.Driver (runUI)
 
-import App.Component.Home (component)
+import App.Component.App (component)
 
 main :: Effect Unit
 main = HA.runHalogenAff do
