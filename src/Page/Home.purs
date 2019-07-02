@@ -3,22 +3,89 @@ module App.Page.Home where
 import Prelude
 
 import App.Capability.Navigate (class Navigate)
+import App.Capability.Resource.Instance (class ManageInstance, getInstance)
+import App.Data.Instance (Instance)
+import Data.Const (Const)
+import Data.Maybe (Maybe(..))
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
+import Halogen.Themes.Bootstrap3 (thumbnail)
+import Network.RemoteData (RemoteData(..), fromMaybe)
 
 type State =
-    Unit
+    { server :: RemoteData String Instance
+    }
 
-component :: ∀ q i o m. Navigate m => H.Component HH.HTML q i o m
-component =
-    H.mkComponent
-        { initialState: const unit
-        , render
-        , eval: H.mkEval H.defaultEval
+data Action
+    = Initialize
+
+component
+    :: ∀ m
+    . Navigate m
+    => ManageInstance m
+    => H.Component HH.HTML (Const Void) Unit Void m
+component = H.mkComponent
+    { initialState
+    , render
+    , eval: H.mkEval $ H.defaultEval
+        { handleAction = handleAction
+        , initialize = Just Initialize
         }
+    }
 
-render :: ∀ m. State -> H.ComponentHTML Unit () m
-render _ =
-    HH.div_
-        [ HH.text "HOME"
-        ]
+    where
+        initialState :: Unit -> State
+        initialState _ =
+            { server: NotAsked
+            }
+
+        handleAction :: Action -> H.HalogenM State Action () Void m Unit
+        handleAction = case _ of
+            Initialize -> do
+              H.modify_ _ { server = Loading }
+              server <- getInstance
+              H.modify_ _ { server = fromMaybe server }
+
+        render :: State -> H.ComponentHTML Action () m
+        render state =
+            HH.div_
+                [ HH.h1_ [ HH.text "HOME" ]
+                , (renderInstanceData state.server)
+                ]
+
+        renderInstanceData :: ∀ props. RemoteData String Instance -> HH.HTML props Action
+        renderInstanceData = case _ of
+            NotAsked ->
+                HH.div_
+                    [ HH.text "Your instance data"
+                    ]
+            Loading ->
+                HH.div_
+                    [ HH.text "Loading ..."
+                    ]
+            Failure error ->
+                HH.div_
+                    [ HH.text "Error :/"
+                    ]
+            Success server ->
+                renderInstance server
+
+        renderInstance :: ∀ props. Instance -> HH.HTML props Action
+        renderInstance server =
+            HH.div_
+                [ HH.h2_ [ HH.text server.title ]
+                , HH.p_ [ HH.text server.description ]
+                , renderThumbnail server.thumbnail
+                ]
+
+        renderThumbnail :: ∀ props. Maybe String -> HH.HTML props Action
+        renderThumbnail = case _ of
+            Nothing ->
+                HH.text ""
+            Just thumbnail ->
+                HH.img
+                    [ HP.src thumbnail
+                    , HP.alt "Instance thumbnail"
+                    , HP.width 400
+                    ]

@@ -17,9 +17,8 @@ You can edit this file as you like.
     , "routing"
     , "routing-duplex"
     , "remotedata"
-    , "affjax"
+    , "nullable"
     , "simple-json"
-    , "argonaut-core"
-    , "argonaut-codecs"
+    , "simple-ajax"
     ]
 }
