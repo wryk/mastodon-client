@@ -18,19 +18,19 @@ import Routing.Hash as RH
 
 main :: Effect Unit
 main = HA.runHalogenAff do
-	body <- HA.awaitBody
+    body <- HA.awaitBody
 
-	let
-		environment :: Environment
-		environment =
-			{ domain: "eldritch.cafe"
-			}
+    let
+        environment :: Environment
+        environment =
+            { domain: "eldritch.cafe"
+            }
 
-		rootComponent :: H.Component HH.HTML Router.Query Unit Void Aff
-		rootComponent = H.hoist (runAppM environment) Router.component
+        rootComponent :: H.Component HH.HTML Router.Query Unit Void Aff
+        rootComponent = H.hoist (runAppM environment) Router.component
 
-	halogenIO <- runUI rootComponent unit body
+    halogenIO <- runUI rootComponent unit body
 
-	void $ liftEffect $ RH.matchesWith (RD.parse routeCodec) \old new ->
-		when (old /= Just new) do
-			launchAff_ $ halogenIO.query $ H.tell $ Router.Navigate new
+    void $ liftEffect $ RH.matchesWith (RD.parse routeCodec) \old new ->
+        when (old /= Just new) do
+            launchAff_ $ halogenIO.query $ H.tell $ Router.Navigate new
