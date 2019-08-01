@@ -10,7 +10,6 @@ import Data.Maybe (Maybe(..))
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
-import Halogen.Themes.Bootstrap3 (thumbnail)
 import Network.RemoteData (RemoteData(..), fromMaybe)
 
 type State =

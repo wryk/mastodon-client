@@ -4,6 +4,7 @@ import Prelude
 
 import App.Capability.Navigate (class Navigate)
 import App.Capability.Resource.Instance (class ManageInstance)
+import App.Capability.Resource.Timeline (class ManageTimeline)
 import App.Data.Route (routeCodec)
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, asks, runReaderT)
 import Data.Either (hush)
@@ -40,3 +41,6 @@ instance navigateAppM :: Navigate AppM where
 
 instance manageInstanceAppM :: ManageInstance AppM where
     getInstance = liftAff $ hush <$> get "https://eldritch.cafe/api/v1/instance"
+
+instance manageTimelineAppM :: ManageTimeline AppM where
+    getPublic = liftAff $ hush <$> get "https://eldritch.cafe/api/v1/timelines/public"

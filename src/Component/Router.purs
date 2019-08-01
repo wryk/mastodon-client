@@ -4,9 +4,11 @@ import Prelude
 
 import App.Capability.Navigate (class Navigate, navigate)
 import App.Capability.Resource.Instance (class ManageInstance)
+import App.Capability.Resource.Timeline (class ManageTimeline)
 import App.Component.HTML.Utils (routeHref)
 import App.Data.Route (Route(..), routeCodec)
 import App.Page.Home as Home
+import App.Page.PublicTimeline as PublicTimeline
 import Data.Const (Const)
 import Data.Either (hush)
 import Data.Maybe (Maybe(..), fromMaybe)
@@ -30,6 +32,7 @@ data Query a
 
 type ChildSlots =
     ( home :: (H.Slot (Const Void) Void) Unit
+    , publicTimeline :: (H.Slot (Const Void) Void) Unit
     )
 
 component
@@ -37,6 +40,7 @@ component
      . MonadAff m
     => Navigate m
     => ManageInstance m
+    => ManageTimeline m
     => H.Component HH.HTML Query Unit Void m
 component = H.mkComponent
     { initialState: \_ -> { route: Nothing }
@@ -76,7 +80,7 @@ component = H.mkComponent
                         HomeTimeline ->
                             HH.text "HomeTimeline"
                         PublicTimeline ->
-                            HH.text "PublicTimeline"
+                            HH.slot (SProxy :: _ "publicTimeline") unit PublicTimeline.component unit absurd
                         ConversationsTimeline ->
                             HH.text "ConversationsTimeline"
                         (HashtagTimeline hastag) ->
