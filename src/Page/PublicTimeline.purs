@@ -9,6 +9,7 @@ import Data.Const (Const)
 import Data.Maybe (Maybe(..))
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Properties as HP
 import Network.RemoteData (RemoteData(..), fromMaybe)
 
 type State =
@@ -56,7 +57,7 @@ component = H.mkComponent
         renderStatusesData = case _ of
             NotAsked ->
                 HH.div_
-                    [ HH.text "Your statuses data"
+                    [ HH.text "This is your public timeline"
                     ]
             Loading ->
                 HH.div_
@@ -78,6 +79,22 @@ component = H.mkComponent
         renderStatus ::  ∀ props. Status -> HH.HTML props Action
         renderStatus status =
             HH.div_
-                [ HH.h2_ [ HH.text status.uri ]
+                [ HH.a
+                    [ HP.href status.account.url
+                    ]
+                    [ HH.img
+                        [ HP.src status.account.avatar
+                        , HP.alt $ status.account.acct <> " avatar"
+                        , HP.width 32
+                        ]
+                    , HH.text status.account.display_name
+                    , HH.text " "
+                    , HH.small_ [ HH.text status.account.acct ]
+                    ]
                 , HH.p_ [ HH.text status.content ]
+                , HH.a
+                    [ HP.href status.uri
+                    ]
+                    [ HH.text status.created_at
+                    ]
                 ]

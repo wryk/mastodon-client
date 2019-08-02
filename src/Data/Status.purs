@@ -12,6 +12,7 @@ type Status =
     , url :: Maybe String
     , account :: Account
     , content :: String
+    , created_at :: String
     }
 
 readStatus :: String -> Either MultipleErrors Status
