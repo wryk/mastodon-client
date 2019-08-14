@@ -13,10 +13,10 @@ import Halogen.HTML as HH
 import Halogen.HTML.Properties as HP
 import Web.HTML (HTMLElement)
 
-foreign import setInnerHTMLImpl :: EffectFn3 Unit String HTMLElement Unit
+foreign import unsafeSetInnerHTMLImpl :: EffectFn3 Unit String HTMLElement Unit
 
-setInnerHTML :: String -> HTMLElement -> Effect Unit
-setInnerHTML = runEffectFn3 setInnerHTMLImpl unit
+unsafeSetInnerHTML :: String -> HTMLElement -> Effect Unit
+unsafeSetInnerHTML = runEffectFn3 unsafeSetInnerHTMLImpl unit
 
 type State =
     { elementRef :: H.RefLabel
@@ -29,7 +29,7 @@ data Action
     = SetInnerHTML
     | Receive Input
 
-component :: forall m. MonadAff m => H.Component HH.HTML (Const Void) Input Void m
+component :: ∀ m. MonadAff m => H.Component HH.HTML (Const Void) Input Void m
 component = H.mkComponent
     { initialState
     , render
@@ -54,7 +54,7 @@ component = H.mkComponent
 
                 for_ maybeElement \element -> do
                     { html } <- H.get
-                    H.liftEffect $ setInnerHTML html element
+                    H.liftEffect $ unsafeSetInnerHTML html element
 
             Receive html -> do
                 H.modify_ _ { html = html }

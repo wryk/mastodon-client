@@ -3,7 +3,7 @@ module Main where
 import Prelude
 
 import App.AppM (Environment, runAppM)
-import App.Component.Router as Router
+import App.Router as Router
 import App.Data.Route (routeCodec)
 import Data.Maybe (Maybe(..))
 import Effect (Effect)

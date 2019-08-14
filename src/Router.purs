@@ -1,11 +1,11 @@
-module App.Component.Router where
+module App.Router where
 
 import Prelude
 
 import App.Capability.Navigate (class Navigate, navigate)
 import App.Capability.Resource.Instance (class ManageInstance)
 import App.Capability.Resource.Timeline (class ManageTimeline)
-import App.Component.HTML.Utils (routeHref)
+import App.Component.HTML.Utils (safeHref)
 import App.Data.Route (Route(..), routeCodec)
 import App.Page.Home as Home
 import App.Page.PublicTimeline as PublicTimeline
@@ -96,42 +96,42 @@ component = H.mkComponent
             HH.ul_
                 [ HH.li_
                     [ HH.a
-                        [ routeHref Home
+                        [ safeHref Home
                         ]
                         [ HH.text "Home"
                         ]
                     ]
                 , HH.li_
                     [ HH.a
-                        [ routeHref HomeTimeline
+                        [ safeHref HomeTimeline
                         ]
                         [ HH.text "Home timeline"
                         ]
                     ]
                 , HH.li_
                     [ HH.a
-                        [ routeHref PublicTimeline
+                        [ safeHref PublicTimeline
                         ]
                         [ HH.text "Public timeline"
                         ]
                     ]
                 , HH.li_
                     [ HH.a
-                        [ routeHref ConversationsTimeline
+                        [ safeHref ConversationsTimeline
                         ]
                         [ HH.text "Conversations"
                         ]
                     ]
                 , HH.li_
                     [ HH.a
-                        [ routeHref (HashtagTimeline "purescript")
+                        [ safeHref (HashtagTimeline "purescript")
                         ]
                         [ HH.text "Hashtag timeline : #purescript"
                         ]
                     ]
                 , HH.li_
                     [ HH.a
-                        [ routeHref (ListTimeline "so")
+                        [ safeHref (ListTimeline "so")
                         ]
                         [ HH.text "List timeline : SO"
                         ]

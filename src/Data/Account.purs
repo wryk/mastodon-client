@@ -18,5 +18,17 @@ type Account =
     , avatar_static :: String
     , header :: String
     , header_static :: String
+    -- , emojis :: Array Emoji
+    -- , moved :: Maybe MovedAccount
+    , fields :: Array Field
     , bot :: Maybe Boolean
+    }
+
+newtype MovedAccount
+    = MovedAccount Account
+
+type Field =
+    { name :: String
+    , value :: String
+    , verified_at :: Maybe String
     }
