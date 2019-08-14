@@ -1,9 +1,19 @@
 module App.Data.Account where
 
+import Prelude
+
 import Data.Maybe (Maybe)
+import Simple.JSON (class ReadForeign, class WriteForeign)
+
+newtype AccountId = AccountId String
+
+derive newtype instance eqAccountId :: Eq AccountId
+derive newtype instance ordAccountId :: Ord AccountId
+derive newtype instance readForeignAccountId :: ReadForeign AccountId
+derive newtype instance writeForeignAccountId :: WriteForeign AccountId
 
 type Account =
-    { id :: String
+    { id :: AccountId
     , username :: String
     , acct :: String
     , display_name :: String

@@ -1,11 +1,20 @@
 module App.Data.Status where
 
-import App.Data.Account
+import Prelude
+
+import App.Data.Account (Account)
 import Data.Maybe (Maybe)
--- import Simple.JSON (class ReadForeign, class WriteForeign)
+import Simple.JSON (class ReadForeign, class WriteForeign)
+
+newtype StatusId = StatusId String
+
+derive newtype instance eqStatusId :: Eq StatusId
+derive newtype instance ordStatusId :: Ord StatusId
+derive newtype instance readForeignStatusId :: ReadForeign StatusId
+derive newtype instance writeForeignStatusId :: WriteForeign StatusId
 
 type Status =
-    { id :: String
+    { id :: StatusId
     , uri :: String
     , url :: Maybe String
     , account :: Account
@@ -33,8 +42,12 @@ type Status =
     , pinned :: Maybe Boolean
     }
 
-newtype RebloggedStatus
-    = RebloggedStatus Status
+-- newtype RebloggedStatus = RebloggedStatus Status
+
+-- derive newtype instance eqRebloggedStatus :: Eq RebloggedStatus
+-- derive newtype instance ordRebloggedStatus :: Ord RebloggedStatus
+-- derive newtype instance readForeignRebloggedStatus :: ReadForeign RebloggedStatus
+-- derive newtype instance writeForeignRebloggedStatus :: WriteForeign RebloggedStatus
 
 data Visibility
     = Public

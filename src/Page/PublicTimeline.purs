@@ -5,7 +5,7 @@ import Prelude
 import App.Capability.Navigate (class Navigate)
 import App.Capability.Resource.Timeline (class ManageTimeline, getPublic)
 import App.Component.Status as StatusComponent
-import App.Data.Status (Status)
+import App.Data.Status (Status, StatusId)
 import Data.Const (Const)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
@@ -22,7 +22,7 @@ data Action
     = Initialize
 
 type ChildSlots =
-    ( "status" :: H.Slot (Const Void) Void String
+    ( "status" :: H.Slot (Const Void) Void StatusId
     )
 
 _status = SProxy :: SProxy "status"
