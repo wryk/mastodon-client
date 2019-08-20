@@ -62,7 +62,7 @@ component = H.mkComponent
                 , renderStatusesData $ state.statuses
                 ]
 
-        -- renderStatusesData :: ∀ props. RemoteData String (Array Status) -> HH.HTML props Action
+        renderStatusesData :: RemoteData String (Array Status) -> H.ComponentHTML Action ChildSlots m
         renderStatusesData = case _ of
             NotAsked ->
                 HH.div_

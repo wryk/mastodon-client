@@ -2,8 +2,8 @@ module App.Component.Status where
 
 import Prelude
 
-import App.Data.Status (Status)
 import App.Component.RawHTML as RawHTML
+import App.Data.Status (Status, StatusRep)
 import Data.Const (Const)
 import Data.Maybe (Maybe(..))
 import Data.Symbol (SProxy(..))
@@ -46,6 +46,24 @@ component = H.mkComponent
 
         render :: State -> H.ComponentHTML Action ChildSlots m
         render status =
+            HH.div
+                [ HP.class_ $ HH.ClassName "status"
+                ]
+                case status.reblog of
+                    Nothing ->
+                        [ statusView status
+                        ]
+                    Just rebloggedStatus ->
+                        [ reblogHeaderView status
+                        , statusView rebloggedStatus
+                        ]
+
+        reblogHeaderView status =
+            HH.small_
+                [ HH.text $ status.account.display_name <> " boosted" ]
+
+        statusView :: ∀ r. { | StatusRep r } -> H.ComponentHTML Action ChildSlots m
+        statusView status =
             HH.div_
                 [ HH.a
                     [ HP.href status.account.url

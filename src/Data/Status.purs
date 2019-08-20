@@ -13,12 +13,12 @@ derive newtype instance ordStatusId :: Ord StatusId
 derive newtype instance readForeignStatusId :: ReadForeign StatusId
 derive newtype instance writeForeignStatusId :: WriteForeign StatusId
 
-type Status =
-    { id :: StatusId
+type StatusRep row =
+    ( id :: StatusId
     , uri :: String
     , url :: Maybe String
     , account :: Account
-    , in_reply_to_id :: Maybe String
+    , in_reply_to_id :: Maybe StatusId
     , in_reply_to_account_id :: Maybe String
     -- , reblog :: Maybe RebloggedStatus
     , content :: String
@@ -40,14 +40,12 @@ type Status =
     -- , application :: Application
     -- language :: SMaybe tring
     , pinned :: Maybe Boolean
-    }
+    | row
+    )
 
--- newtype RebloggedStatus = RebloggedStatus Status
+type RebloggedStatus = { | StatusRep () }
 
--- derive newtype instance eqRebloggedStatus :: Eq RebloggedStatus
--- derive newtype instance ordRebloggedStatus :: Ord RebloggedStatus
--- derive newtype instance readForeignRebloggedStatus :: ReadForeign RebloggedStatus
--- derive newtype instance writeForeignRebloggedStatus :: WriteForeign RebloggedStatus
+type Status = { | StatusRep (reblog :: Maybe RebloggedStatus) }
 
 data Visibility
     = Public
