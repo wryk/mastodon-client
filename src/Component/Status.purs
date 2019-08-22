@@ -2,7 +2,10 @@ module App.Component.Status where
 
 import Prelude
 
+import App.Capability.Navigate (class Navigate, navigate)
 import App.Component.RawHTML as RawHTML
+import App.Data.Route (Route)
+import App.Data.Route as Route
 import App.Data.Status (Status, StatusRep)
 import Data.Const (Const)
 import Data.Maybe (Maybe(..))
@@ -10,7 +13,10 @@ import Data.Symbol (SProxy(..))
 import Effect.Aff.Class (class MonadAff)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
+import Web.Event.Event (preventDefault)
+import Web.UIEvent.MouseEvent (MouseEvent, toEvent)
 
 type State = Status
 
@@ -18,6 +24,7 @@ type Input = Status
 
 data Action
     = Receive Input
+    | NavigatePrevent MouseEvent Route
 
 type ChildSlots =
     ( "content" :: H.Slot (Const Void) Void Unit
@@ -25,7 +32,11 @@ type ChildSlots =
 
 _content = SProxy :: SProxy "content"
 
-component :: ∀ m. MonadAff m => H.Component HH.HTML (Const Void) Input Void m
+component
+    :: ∀ m
+    . MonadAff m
+    => Navigate m
+    => H.Component HH.HTML (Const Void) Input Void m
 component = H.mkComponent
     { initialState: identity
     , render
@@ -44,6 +55,10 @@ component = H.mkComponent
             Receive status -> do
                 H.put status
 
+            NavigatePrevent mouseEvent route -> do
+                H.liftEffect $ preventDefault $ toEvent mouseEvent
+                navigate route
+
         render :: State -> H.ComponentHTML Action ChildSlots m
         render status =
             HH.div
@@ -60,13 +75,21 @@ component = H.mkComponent
 
         reblogHeaderView status =
             HH.small_
-                [ HH.text $ status.account.display_name <> " boosted" ]
+                [ HH.a
+                    [ HP.href status.account.url
+                    , HE.onClick \event -> Just $ NavigatePrevent event (Route.Account status.account.id)
+                    ]
+                    [ HH.text status.account.display_name ]
+                , HH.text " "
+                , HH.text "boosted"
+                ]
 
         statusView :: ∀ r. { | StatusRep r } -> H.ComponentHTML Action ChildSlots m
         statusView status =
             HH.div_
                 [ HH.a
                     [ HP.href status.account.url
+                    , HE.onClick \event -> Just $ NavigatePrevent event (Route.Account status.account.id)
                     ]
                     [ HH.img
                         [ HP.src status.account.avatar

@@ -3,10 +3,12 @@ module App.Router where
 import Prelude
 
 import App.Capability.Navigate (class Navigate, navigate)
+import App.Capability.Resource.Account (class ManageAccount)
 import App.Capability.Resource.Instance (class ManageInstance)
 import App.Capability.Resource.Timeline (class ManageTimeline)
 import App.Component.HTML.Utils (safeHref)
 import App.Data.Route (Route(..), routeCodec)
+import App.Page.Account as Account
 import App.Page.Home as Home
 import App.Page.PublicTimeline as PublicTimeline
 import Data.Const (Const)
@@ -30,15 +32,19 @@ data Action
 data Query a
     = Navigate Route a
 
+type OpaqueSlot = H.Slot (Const Void) Void
+
 type ChildSlots =
-    ( home :: (H.Slot (Const Void) Void) Unit
-    , publicTimeline :: (H.Slot (Const Void) Void) Unit
+    ( home :: OpaqueSlot Unit
+    , account :: OpaqueSlot Unit
+    , publicTimeline :: OpaqueSlot Unit
     )
 
 component
     :: ∀ m
      . MonadAff m
     => Navigate m
+    => ManageAccount m
     => ManageInstance m
     => ManageTimeline m
     => H.Component HH.HTML Query Unit Void m
@@ -77,6 +83,8 @@ component = H.mkComponent
                     Just r -> case r of
                         Home ->
                             HH.slot (SProxy :: _ "home") unit Home.component unit absurd
+                        (Account accountId) ->
+                            HH.slot (SProxy :: _ "account") unit Account.component accountId absurd
                         HomeTimeline ->
                             HH.text "HomeTimeline"
                         PublicTimeline ->

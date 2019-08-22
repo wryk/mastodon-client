@@ -3,8 +3,10 @@ module App.AppM where
 import Prelude
 
 import App.Capability.Navigate (class Navigate)
+import App.Capability.Resource.Account (class ManageAccount)
 import App.Capability.Resource.Instance (class ManageInstance)
 import App.Capability.Resource.Timeline (class ManageTimeline)
+import App.Data.Account (AccountId(..))
 import App.Data.Route (routeCodec)
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, asks, runReaderT)
 import Data.Either (hush)
@@ -15,6 +17,9 @@ import Routing.Duplex as RD
 import Routing.Hash as RH
 import Simple.Ajax (get)
 import Type.Equality (class TypeEquals, from)
+
+baseApiUrl :: String
+baseApiUrl = "https://eldritch.cafe/api"
 
 type Environment =
     { domain :: String
@@ -39,8 +44,11 @@ instance monadAskAppM :: TypeEquals e Environment => MonadAsk e AppM where
 instance navigateAppM :: Navigate AppM where
     navigate = liftEffect <<< RH.setHash <<< RD.print routeCodec
 
+instance manageAccountAppM :: ManageAccount AppM where
+    getAccount (AccountId id) = liftAff $ hush <$> get (baseApiUrl <> "/v1/accounts/" <> id)
+
 instance manageInstanceAppM :: ManageInstance AppM where
-    getInstance = liftAff $ hush <$> get "https://eldritch.cafe/api/v1/instance"
+    getInstance = liftAff $ hush <$> get (baseApiUrl <> "/v1/instance")
 
 instance manageTimelineAppM :: ManageTimeline AppM where
-    getPublic = liftAff $ hush <$> get "https://eldritch.cafe/api/v1/timelines/public"
+    getPublic = liftAff $ hush <$> get (baseApiUrl <> "/v1/timelines/public")

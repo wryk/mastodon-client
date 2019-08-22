@@ -9,6 +9,7 @@ newtype AccountId = AccountId String
 
 derive newtype instance eqAccountId :: Eq AccountId
 derive newtype instance ordAccountId :: Ord AccountId
+derive newtype instance showAccountId :: Show AccountId
 derive newtype instance readForeignAccountId :: ReadForeign AccountId
 derive newtype instance writeForeignAccountId :: WriteForeign AccountId
 
