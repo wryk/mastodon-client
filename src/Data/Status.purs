@@ -8,6 +8,7 @@ import Simple.JSON (class ReadForeign, class WriteForeign)
 
 newtype StatusId = StatusId String
 
+derive newtype instance showStatusId :: Show StatusId
 derive newtype instance eqStatusId :: Eq StatusId
 derive newtype instance ordStatusId :: Ord StatusId
 derive newtype instance readForeignStatusId :: ReadForeign StatusId
@@ -20,12 +21,12 @@ type StatusRep row =
     , account :: Account
     , in_reply_to_id :: Maybe StatusId
     , in_reply_to_account_id :: Maybe String
-    -- , reblog :: Maybe RebloggedStatus
     , content :: String
     , created_at :: String
     -- , emojis :: Array Emoji
     , replies_count :: Int
     , reblogs_count :: Int
+    , favourites_count :: Int
     , reblogged :: Maybe Boolean
     , favorited :: Maybe Boolean
     , muted :: Maybe Boolean
@@ -46,6 +47,11 @@ type StatusRep row =
 type RebloggedStatus = { | StatusRep () }
 
 type Status = { | StatusRep (reblog :: Maybe RebloggedStatus) }
+
+type Context =
+    { ancestors :: Array Status
+    , descendants :: Array Status
+    }
 
 data Visibility
     = Public

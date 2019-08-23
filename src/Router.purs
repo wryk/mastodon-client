@@ -6,10 +6,10 @@ import App.Capability.Navigate (class Navigate, navigate)
 import App.Capability.Resource.Account (class ManageAccount)
 import App.Capability.Resource.Instance (class ManageInstance)
 import App.Capability.Resource.Timeline (class ManageTimeline)
-import App.Component.HTML.Utils (safeHref)
+import App.Capability.Resource.Status (class ManageStatus)
 import App.Data.Route (Route(..), routeCodec)
 import App.Page.Account as Account
-import App.Page.Home as Home
+import App.Page.Status as Status
 import App.Page.PublicTimeline as PublicTimeline
 import Data.Const (Const)
 import Data.Either (hush)
@@ -37,6 +37,7 @@ type OpaqueSlot = H.Slot (Const Void) Void
 type ChildSlots =
     ( home :: OpaqueSlot Unit
     , account :: OpaqueSlot Unit
+    , status :: OpaqueSlot Unit
     , publicTimeline :: OpaqueSlot Unit
     )
 
@@ -47,6 +48,7 @@ component
     => ManageAccount m
     => ManageInstance m
     => ManageTimeline m
+    => ManageStatus m
     => H.Component HH.HTML Query Unit Void m
 component = H.mkComponent
     { initialState: \_ -> { route: Nothing }
@@ -77,71 +79,17 @@ component = H.mkComponent
 
         render :: State -> H.ComponentHTML Action ChildSlots m
         render { route } =
-            HH.div_
-                [ renderMenu
-                , case route of
+            HH.main_
+                [ case route of
                     Just r -> case r of
                         Home ->
-                            HH.slot (SProxy :: _ "home") unit Home.component unit absurd
+                            HH.slot (SProxy :: _ "home") unit PublicTimeline.component unit absurd
                         (Account accountId) ->
                             HH.slot (SProxy :: _ "account") unit Account.component accountId absurd
-                        HomeTimeline ->
-                            HH.text "HomeTimeline"
-                        PublicTimeline ->
-                            HH.slot (SProxy :: _ "publicTimeline") unit PublicTimeline.component unit absurd
-                        ConversationsTimeline ->
-                            HH.text "ConversationsTimeline"
-                        (HashtagTimeline hastag) ->
-                            HH.text "HashtagTimeline"
-                        (ListTimeline list) ->
-                            HH.text "ListTimeline"
+                        (Status statusId) ->
+                            HH.slot (SProxy :: _ "status") unit Status.component statusId absurd
+                        _ ->
+                            HH.text "YADA YADA YADA"
                     Nothing ->
                         HH.text "404"
-                ]
-
-        renderMenu :: ∀ props. HH.HTML props Action
-        renderMenu =
-            HH.ul_
-                [ HH.li_
-                    [ HH.a
-                        [ safeHref Home
-                        ]
-                        [ HH.text "Home"
-                        ]
-                    ]
-                , HH.li_
-                    [ HH.a
-                        [ safeHref HomeTimeline
-                        ]
-                        [ HH.text "Home timeline"
-                        ]
-                    ]
-                , HH.li_
-                    [ HH.a
-                        [ safeHref PublicTimeline
-                        ]
-                        [ HH.text "Public timeline"
-                        ]
-                    ]
-                , HH.li_
-                    [ HH.a
-                        [ safeHref ConversationsTimeline
-                        ]
-                        [ HH.text "Conversations"
-                        ]
-                    ]
-                , HH.li_
-                    [ HH.a
-                        [ safeHref (HashtagTimeline "purescript")
-                        ]
-                        [ HH.text "Hashtag timeline : #purescript"
-                        ]
-                    ]
-                , HH.li_
-                    [ HH.a
-                        [ safeHref (ListTimeline "so")
-                        ]
-                        [ HH.text "List timeline : SO"
-                        ]
-                    ]
                 ]

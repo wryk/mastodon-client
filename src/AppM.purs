@@ -5,9 +5,11 @@ import Prelude
 import App.Capability.Navigate (class Navigate)
 import App.Capability.Resource.Account (class ManageAccount)
 import App.Capability.Resource.Instance (class ManageInstance)
+import App.Capability.Resource.Status (class ManageStatus)
 import App.Capability.Resource.Timeline (class ManageTimeline)
 import App.Data.Account (AccountId(..))
 import App.Data.Route (routeCodec)
+import App.Data.Status (StatusId(..))
 import Control.Monad.Reader.Trans (class MonadAsk, ReaderT, asks, runReaderT)
 import Data.Either (hush)
 import Effect.Aff (Aff)
@@ -52,3 +54,9 @@ instance manageInstanceAppM :: ManageInstance AppM where
 
 instance manageTimelineAppM :: ManageTimeline AppM where
     getPublic = liftAff $ hush <$> get (baseApiUrl <> "/v1/timelines/public")
+
+instance manageStatusAppM :: ManageStatus AppM where
+    getStatus (StatusId id) = liftAff $ hush <$> get (baseApiUrl <> "/v1/statuses/" <> id)
+    getStatusContext (StatusId id) = liftAff $ hush <$> get (baseApiUrl <> "/v1/statuses/" <> id <> "/context")
+    getStatusFavouritedBy (StatusId id) = liftAff $ hush <$> get (baseApiUrl <> "/v1/statuses/" <> id <> "/favourited_by")
+    getStatusRebloggedBy (StatusId id) = liftAff $ hush <$> get (baseApiUrl <> "/v1/statuses/" <> id <> "/reblogged_by")

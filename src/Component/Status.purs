@@ -103,8 +103,14 @@ component = H.mkComponent
                 , HH.div_ [ HH.slot _content unit RawHTML.component status.content absurd ]
                 , HH.a
                     [ HP.href status.uri
+                    , HE.onClick \event -> Just $ NavigatePrevent event (Route.Status status.id)
                     ]
                     [ HH.text status.created_at
+                    ]
+                , HH.ul_
+                    [ HH.li_ [ HH.text $ "Replies: " <> (show status.replies_count) ]
+                    , HH.li_ [ HH.text $ "Favourites: " <> (show status.favourites_count) ]
+                    , HH.li_ [ HH.text $ "Reblogs: " <> (show status.reblogs_count) ]
                     ]
                 , HH.div_
                     [ HH.button

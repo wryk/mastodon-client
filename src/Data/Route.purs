@@ -3,9 +3,10 @@ module App.Data.Route where
 import Prelude hiding ((/))
 
 import App.Data.Account (AccountId(..))
+import App.Data.Status (StatusId(..))
 import Data.Either (Either(..))
 import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
+-- import Data.Generic.Rep.Show (genericShow)
 import Routing.Duplex (RouteDuplex', as, root, segment)
 import Routing.Duplex.Generic (noArgs, sum)
 import Routing.Duplex.Generic.Syntax ((/))
@@ -13,6 +14,7 @@ import Routing.Duplex.Generic.Syntax ((/))
 data Route
     = Home
     | Account AccountId
+    | Status StatusId
     | HomeTimeline
     | ConversationsTimeline
     | PublicTimeline
@@ -23,13 +25,14 @@ derive instance genericRoute :: Generic Route _
 derive instance eqRoute :: Eq Route
 derive instance ordRoute :: Ord Route
 
-instance showRoute :: Show Route where
-    show = genericShow
+-- instance showRoute :: Show Route where
+--     show = genericShow
 
 routeCodec :: RouteDuplex' Route
 routeCodec = root $ sum
     { "Home": noArgs
     , "Account": "account" / accountId segment
+    , "Status": "status" / statusId segment
     , "HomeTimeline": "home" / noArgs
     , "ConversationsTimeline": "conversations" / noArgs
     , "PublicTimeline": "public" / noArgs
@@ -37,11 +40,8 @@ routeCodec = root $ sum
     , "ListTimeline": "list" / segment
     }
 
-printAccountId :: AccountId -> String
-printAccountId (AccountId id) = id
-
-parseAccountId :: String -> Either String AccountId
-parseAccountId = Right <<< AccountId
-
 accountId :: RouteDuplex' String -> RouteDuplex' AccountId
-accountId = as printAccountId parseAccountId
+accountId = as (\(AccountId id) -> id) (Right <<< AccountId)
+
+statusId :: RouteDuplex' String -> RouteDuplex' StatusId
+statusId = as (\(StatusId id) -> id) (Right <<< StatusId)
