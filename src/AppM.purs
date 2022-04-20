@@ -21,7 +21,7 @@ import Simple.Ajax (get)
 import Type.Equality (class TypeEquals, from)
 
 baseApiUrl :: String
-baseApiUrl = "https://eldritch.cafe/api"
+baseApiUrl = "https://mastodon.top/api"
 
 type Environment =
     { domain :: String
